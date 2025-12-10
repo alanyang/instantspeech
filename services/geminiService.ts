@@ -3,6 +3,7 @@ import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { AnalysisResult, SessionMode, SpeechLevel, TopicOutline } from "../types";
 
 const API_KEY = process.env.API_KEY;
+console.log(API_KEY, "API_KEY")
 
 if (!API_KEY) {
   console.error("API_KEY is missing from environment variables.");
@@ -61,9 +62,9 @@ const analysisSchema: Schema = {
       items: {
         type: Type.OBJECT,
         properties: {
-            original: { type: Type.STRING, description: "The original sentence with error." },
-            correction: { type: Type.STRING, description: "The grammatically correct or more native-sounding version." },
-            reason: { type: Type.STRING, description: "EXTREMELY CONCISE explanation. Max 10 words. Point form." }
+          original: { type: Type.STRING, description: "The original sentence with error." },
+          correction: { type: Type.STRING, description: "The grammatically correct or more native-sounding version." },
+          reason: { type: Type.STRING, description: "EXTREMELY CONCISE explanation. Max 10 words. Point form." }
         }
       }
     },
@@ -94,54 +95,54 @@ export const generateTopic = async (interests: string[], goal: string, language:
     // Context instructions based on level
     let levelContext = "";
     switch (level) {
-        case SpeechLevel.BEGINNER:
-            levelContext = isChinese 
-                ? "程度：初學者/職場新人。場景：辦公室或社交場合。題目要具體、生活化，例如介紹新同事、分享一個簡單的觀點。避免太抽象。" 
-                : "Level: Beginner/Corporate Junior. Context: Workplace or Networking. Concrete scenarios like 'Introducing a peer' or 'Sharing a simple opinion'. Avoid abstract philosophy.";
-            break;
-        case SpeechLevel.ADVANCED:
-            levelContext = isChinese
-                ? "程度：進階/管理層。場景：社會議題或職場決策。題目應涉及時事、趨勢或兩難局面，例如『遠距工作的利弊』。"
-                : "Level: Advanced/Managerial. Context: Concrete Societal or Professional issues. Topics like 'The impact of AI on jobs' or 'Balancing profit and ethics'.";
-            break;
-        case SpeechLevel.EXPERT:
-            levelContext = isChinese
-                ? "程度：專家/高管。場景：抽象哲學或複雜策略。題目應具啟發性，例如『真理是絕對的嗎？』。"
-                : "Level: Expert/Executive. Context: Abstract, Philosophical, or Complex Strategy. Topics like 'Is perception reality?' or 'Leadership in crisis'.";
-            break;
+      case SpeechLevel.BEGINNER:
+        levelContext = isChinese
+          ? "程度：初學者/職場新人。場景：辦公室或社交場合。題目要具體、生活化，例如介紹新同事、分享一個簡單的觀點。避免太抽象。"
+          : "Level: Beginner/Corporate Junior. Context: Workplace or Networking. Concrete scenarios like 'Introducing a peer' or 'Sharing a simple opinion'. Avoid abstract philosophy.";
+        break;
+      case SpeechLevel.ADVANCED:
+        levelContext = isChinese
+          ? "程度：進階/管理層。場景：社會議題或職場決策。題目應涉及時事、趨勢或兩難局面，例如『遠距工作的利弊』。"
+          : "Level: Advanced/Managerial. Context: Concrete Societal or Professional issues. Topics like 'The impact of AI on jobs' or 'Balancing profit and ethics'.";
+        break;
+      case SpeechLevel.EXPERT:
+        levelContext = isChinese
+          ? "程度：專家/高管。場景：抽象哲學或複雜策略。題目應具啟發性，例如『真理是絕對的嗎？』。"
+          : "Level: Expert/Executive. Context: Abstract, Philosophical, or Complex Strategy. Topics like 'Is perception reality?' or 'Leadership in crisis'.";
+        break;
     }
 
     // Mode instructions
     let modeInstruction = "";
     if (mode === SessionMode.SPEECH) {
-        modeInstruction = isChinese 
-            ? "類型：即興演講 (Table Topics)。給我一個引人深思的陳述或問題。" 
-            : "Type: Impromptu Speech (Toastmasters Table Topics style). Give a thought-provoking statement or question to discuss.";
+      modeInstruction = isChinese
+        ? "類型：即興演講 (Table Topics)。給我一個引人深思的陳述或問題。"
+        : "Type: Impromptu Speech (Toastmasters Table Topics style). Give a thought-provoking statement or question to discuss.";
     } else if (mode === SessionMode.EXPRESS) {
-        modeInstruction = isChinese
-            ? "類型：情感表達。關於個人感受或經歷的反思。"
-            : "Type: Personal Expression. A prompt about feelings, memories, or personal reflection.";
+      modeInstruction = isChinese
+        ? "類型：情感表達。關於個人感受或經歷的反思。"
+        : "Type: Personal Expression. A prompt about feelings, memories, or personal reflection.";
     } else if (mode === SessionMode.DEBATE) {
-        modeInstruction = isChinese
-            ? "類型：辯論。格式：『[議題] - 支持還是反對？』"
-            : "Type: Debate Motion. Format: 'Argue For or Against: [Topic]'.";
+      modeInstruction = isChinese
+        ? "類型：辯論。格式：『[議題] - 支持還是反對？』"
+        : "Type: Debate Motion. Format: 'Argue For or Against: [Topic]'.";
     } else if (mode === SessionMode.COMEDY) {
-        const theme = interests[0] || "General Life";
-        modeInstruction = isChinese
-            ? `類型：棟篤笑/脫口秀。主題：${theme}。給我一個好笑的情境設定。`
-            : `Type: Stand-up Comedy Premise. Theme: ${theme}. Give a setup for a funny story or observation.`;
+      const theme = interests[0] || "General Life";
+      modeInstruction = isChinese
+        ? `類型：棟篤笑/脫口秀。主題：${theme}。給我一個好笑的情境設定。`
+        : `Type: Stand-up Comedy Premise. Theme: ${theme}. Give a setup for a funny story or observation.`;
     }
 
     // Base Prompt
-    const prompt = isChinese 
-        ? `
+    const prompt = isChinese
+      ? `
             任務：生成 1 個獨特的即興演講題目，供 InstantSpeech AI 使用。
             語言：${language} (請使用自然、地道的表達，不要翻譯腔)。
             ${levelContext}
             ${modeInstruction}
             限制：最多 20 個字。不要前言，不要解釋，只輸出題目本身。
           `
-        : `
+      : `
             Task: Generate 1 unique impromptu speaking topic for InstantSpeech AI.
             Language: ${language}.
             ${levelContext}
@@ -165,8 +166,8 @@ export const generateTopic = async (interests: string[], goal: string, language:
  * Generates a structured outline (Mindmap) for a topic.
  */
 export const generateTopicOutline = async (topic: string, language: string): Promise<TopicOutline> => {
-    try {
-        const prompt = `
+  try {
+    const prompt = `
             Task: Create a simple mindmap for the topic: "${topic}".
             Language: ${language}.
             Output JSON with:
@@ -175,32 +176,32 @@ export const generateTopicOutline = async (topic: string, language: string): Pro
             Do not include any explanation. JSON Only.
         `;
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-            config: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        centralIdea: { type: Type.STRING },
-                        points: { type: Type.ARRAY, items: { type: Type.STRING } }
-                    }
-                }
-            }
-        });
-
-        if (response.text) {
-             return JSON.parse(response.text) as TopicOutline;
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            centralIdea: { type: Type.STRING },
+            points: { type: Type.ARRAY, items: { type: Type.STRING } }
+          }
         }
-        throw new Error("No text");
-    } catch (error) {
-        console.error("Error generating outline:", error);
-        return {
-            centralIdea: topic,
-            points: ["Key Point 1", "Key Point 2", "Key Point 3"]
-        };
+      }
+    });
+
+    if (response.text) {
+      return JSON.parse(response.text) as TopicOutline;
     }
+    throw new Error("No text");
+  } catch (error) {
+    console.error("Error generating outline:", error);
+    return {
+      centralIdea: topic,
+      points: ["Key Point 1", "Key Point 2", "Key Point 3"]
+    };
+  }
 };
 
 /**
@@ -290,22 +291,22 @@ export const analyzeSpeech = async (audioBlob: Blob, topic: string, durationSeco
     const result = JSON.parse(jsonText) as any;
 
     // Calculate Pace
-    const isChinese = language.toLowerCase().includes('cantonese') || 
-                      language.toLowerCase().includes('mandarin') || 
-                      language.toLowerCase().includes('chinese') ||
-                      language.toLowerCase().includes('japanese');
+    const isChinese = language.toLowerCase().includes('cantonese') ||
+      language.toLowerCase().includes('mandarin') ||
+      language.toLowerCase().includes('chinese') ||
+      language.toLowerCase().includes('japanese');
 
     let contentCount = 0;
     if (result.transcript) {
-        if (isChinese) {
-            const cleanText = result.transcript.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, "");
-            contentCount = cleanText.length;
-        } else {
-            contentCount = result.transcript.trim().split(/\s+/).length;
-        }
+      if (isChinese) {
+        const cleanText = result.transcript.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, "");
+        contentCount = cleanText.length;
+      } else {
+        contentCount = result.transcript.trim().split(/\s+/).length;
+      }
     }
 
-    const safeDuration = Math.max(durationSeconds, 1); 
+    const safeDuration = Math.max(durationSeconds, 1);
     const calculatedPace = Math.round(contentCount / (safeDuration / 60));
     result.wpm = calculatedPace;
 
