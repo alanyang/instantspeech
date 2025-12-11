@@ -100,7 +100,7 @@ export default function App() {
       setProgress(0);
       const totalTime = 45000; // 45s estimate
       const tick = 100;
-      
+
       interval = setInterval(() => {
         setProgress(prev => {
           if (prev >= 99) return 99; // Hold at 99 until finished
@@ -115,11 +115,11 @@ export default function App() {
     setIsAnalyzing(true);
     setCurrentAudioBlob(audioBlob);
     setRecordedDuration(duration);
-    
+
     try {
       const result = await analyzeSpeech(audioBlob, sessionConfig.topic, duration, sessionConfig.mode, sessionConfig.language, sessionConfig.level);
       setAnalysisResult(result);
-      
+
       // Save to History (including full result)
       const historyItem: HistoryItem = {
         id: Date.now().toString(),
@@ -129,7 +129,7 @@ export default function App() {
         score: result.overallScore,
         wpm: result.wpm,
         sentiment: result.sentiment,
-        fullResult: result 
+        fullResult: result
       };
       saveHistoryItem(historyItem);
 
@@ -149,7 +149,7 @@ export default function App() {
       topic: item.topic,
       mode: item.mode,
       durationSeconds: 0, // Not relevant for review
-      language: 'English', 
+      language: 'English',
       level: SpeechLevel.BEGINNER,
       prepTimeSeconds: 0
     });
@@ -168,10 +168,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500 selection:text-white">
-      {/* Background Ambience */}
+      <h3>Hasd</h3>
       <div className="fixed inset-0 z-0 pointer-events-none">
-         <div className={`absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] transition-colors duration-1000 ${sessionConfig.mode === SessionMode.SPEECH ? 'bg-blue-900/20' : sessionConfig.mode === SessionMode.COMEDY ? 'bg-yellow-900/20' : 'bg-rose-900/20'}`}></div>
-         <div className={`absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] transition-colors duration-1000 ${sessionConfig.mode === SessionMode.SPEECH ? 'bg-teal-900/20' : sessionConfig.mode === SessionMode.COMEDY ? 'bg-orange-900/20' : 'bg-purple-900/20'}`}></div>
+        <div className={`absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] transition-colors duration-1000 ${sessionConfig.mode === SessionMode.SPEECH ? 'bg-blue-900/20' : sessionConfig.mode === SessionMode.COMEDY ? 'bg-yellow-900/20' : 'bg-rose-900/20'}`}></div>
+        <div className={`absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] transition-colors duration-1000 ${sessionConfig.mode === SessionMode.SPEECH ? 'bg-teal-900/20' : sessionConfig.mode === SessionMode.COMEDY ? 'bg-orange-900/20' : 'bg-purple-900/20'}`}></div>
       </div>
 
       <div className="relative z-10">
@@ -180,10 +180,10 @@ export default function App() {
         )}
 
         {step === AppStep.SETUP && (
-          <SessionSetup 
-            prefs={userPrefs} 
-            onStart={handleSessionStart} 
-            onBack={handleBackToOnboarding} 
+          <SessionSetup
+            prefs={userPrefs}
+            onStart={handleSessionStart}
+            onBack={handleBackToOnboarding}
             onLoadHistory={handleLoadHistory}
           />
         )}
@@ -194,28 +194,28 @@ export default function App() {
             {isAnalyzing && (
               <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center animate-fade-in p-6">
                 <div className={`w-20 h-20 border-4 border-t-transparent rounded-full animate-spin mb-8 ${sessionConfig.mode === SessionMode.SPEECH ? 'border-blue-500' : 'border-rose-500'}`}></div>
-                
+
                 <h2 className="text-xl md:text-2xl font-bold text-white mb-4">Analyzing Speech...</h2>
-                
+
                 <div className="w-full max-w-md bg-slate-800 rounded-full h-4 mb-4 overflow-hidden border border-slate-700">
-                  <div 
-                    className={`h-full transition-all duration-300 ${sessionConfig.mode === SessionMode.SPEECH ? 'bg-blue-500' : 'bg-rose-500'}`} 
+                  <div
+                    className={`h-full transition-all duration-300 ${sessionConfig.mode === SessionMode.SPEECH ? 'bg-blue-500' : 'bg-rose-500'}`}
                     style={{ width: `${Math.floor(progress)}%` }}
                   ></div>
                 </div>
-                
+
                 <p className="text-slate-300 font-mono text-xl mb-8">{Math.floor(progress)}%</p>
-                
+
                 {/* Tip Carousel */}
                 <div className="h-24 w-full max-w-lg relative flex items-center justify-center">
-                   {activeTips.map((tip, idx) => (
-                     <div 
-                       key={idx}
-                       className={`absolute inset-0 flex items-center justify-center text-center transition-opacity duration-700 ${idx === currentTipIndex ? 'opacity-100' : 'opacity-0'}`}
-                     >
-                       <p className="text-slate-400 text-lg italic">"{tip}"</p>
-                     </div>
-                   ))}
+                  {activeTips.map((tip, idx) => (
+                    <div
+                      key={idx}
+                      className={`absolute inset-0 flex items-center justify-center text-center transition-opacity duration-700 ${idx === currentTipIndex ? 'opacity-100' : 'opacity-0'}`}
+                    >
+                      <p className="text-slate-400 text-lg italic">"{tip}"</p>
+                    </div>
+                  ))}
                 </div>
 
                 <p className="text-slate-600 text-sm mt-4">Estimated time remaining: {Math.max(0, Math.ceil(45 - (progress / 100 * 45)))}s</p>
@@ -225,9 +225,9 @@ export default function App() {
         )}
 
         {step === AppStep.ANALYSIS && analysisResult && (
-          <Analysis 
-            result={analysisResult} 
-            onRestart={handleRestart} 
+          <Analysis
+            result={analysisResult}
+            onRestart={handleRestart}
             mode={sessionConfig.mode}
             audioBlob={currentAudioBlob}
             recordedDuration={recordedDuration}

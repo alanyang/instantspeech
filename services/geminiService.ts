@@ -3,7 +3,6 @@ import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { AnalysisResult, SessionMode, SpeechLevel, TopicOutline } from "../types";
 
 const API_KEY = process.env.API_KEY;
-console.log(API_KEY, "API_KEY")
 
 if (!API_KEY) {
   console.error("API_KEY is missing from environment variables.");
