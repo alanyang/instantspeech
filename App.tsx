@@ -167,7 +167,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500 selection:text-white">
+    <div className="min-h-screen bg-white text-slate-200 font-sans selection:bg-blue-500 selection:text-white">
       <h3>Hasd</h3>
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className={`absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] transition-colors duration-1000 ${sessionConfig.mode === SessionMode.SPEECH ? 'bg-blue-900/20' : sessionConfig.mode === SessionMode.COMEDY ? 'bg-yellow-900/20' : 'bg-rose-900/20'}`}></div>
